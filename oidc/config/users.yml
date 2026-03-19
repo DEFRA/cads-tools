@@ -1,0 +1,12 @@
+- SubjectId: "787553ae-4c55-4b42-aafc-633274691cc1"
+  Username: "mip-viewer-user"
+  Password: "password"
+  Claims:
+    - Type: "name"
+      Value: "Test MIP Viewer"
+    - Type: "email"
+      Value: "mip-viewer-user@internal.test"
+    - Type: "preferred_username"
+      Value: "mip-viewer-user"
+    - Type: "role"
+      Value: "mip-viewer"

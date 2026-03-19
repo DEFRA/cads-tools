@@ -1,0 +1,24 @@
+services:
+  oidc:
+    image: ghcr.io/soluto/oidc-server-mock:0.6.0
+    container_name: cads-oidc-mock
+    ports:
+      - "5556:80"
+    environment:
+      ISSUER: http://oidc:80
+      PORT: 80
+      USERS_CONFIGURATION_PATH: /data/users.yml
+      CLIENTS_CONFIGURATION_PATH: /data/clients.yml
+    volumes:
+      - ${ROOT_DIR}/oidc/config:/data
+    networks:
+      - cads-tools
+    healthcheck:
+      test: ["CMD", "curl", "http://localhost:80/.well-known/openid-configuration"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+networks:
+  cads-tools:
+    driver: bridge
