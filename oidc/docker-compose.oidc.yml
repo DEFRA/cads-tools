@@ -3,7 +3,7 @@ services:
     image: ghcr.io/soluto/oidc-server-mock:0.6.0
     container_name: cads-oidc-mock
     ports:
-      - "5556:80"
+      - "5557:80"
     environment:
       ISSUER: http://oidc:80
       PORT: 80
@@ -21,4 +21,5 @@ services:
 
 networks:
   cads-tools:
+    name: cads-tools
     driver: bridge

@@ -8,8 +8,13 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-cads_data_service}
     ports:
       - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - "./postgres/config:/etc/postgres-config"
     command: >
       postgres
+        -c config_file=/etc/postgres-config/postgresql.conf
+        -c hba_file=/etc/postgres-config/pg_hba.conf
         -c listen_addresses='*'
     networks:
       - cads-tools
@@ -33,9 +38,17 @@ services:
       LS_LOG: WARN
       SERVICES: s3,sqs,firehose
       LOCALSTACK_HOST: 127.0.0.1
+    volumes:
+      - "./localstack_data:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./localstack/init/start-localstack.sh:/etc/localstack/init/ready.d/start-localstack.sh"
     networks:
       - cads-tools
 
 networks:
   cads-tools:
+    name: cads-tools
     driver: bridge
+
+volumes:
+  postgres-data:
