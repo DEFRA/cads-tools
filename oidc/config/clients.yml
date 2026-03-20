@@ -12,7 +12,7 @@
     - "profile"
     - "email"
     - "offline_access"
-    - "api://local-azure-client-id/reports.read"
+    - "api://local-cads-mis/reports.read"
   AllowOfflineAccess: true
   AllowAccessTokensViaBrowser: true
   AccessTokenType: "Jwt"

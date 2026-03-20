@@ -9,6 +9,26 @@ services:
       PORT: 80
       USERS_CONFIGURATION_PATH: /data/users.yml
       CLIENTS_CONFIGURATION_PATH: /data/clients.yml
+      SCOPES_CONFIGURATION_PATH: /data/scopes.yml,
+      API_SCOPES_INLINE: |
+        - Name: "reports.read"
+          DisplayName: "Read reports"
+      API_RESOURCES_INLINE: |
+        - Name: "api://local-cads-mis"
+          Scopes: ["reports.read"]
+      SERVER_OPTIONS_INLINE: |
+        {
+          "IssuerUri": "http://oidc:80",
+          "AccessTokenJwtType": "JWT",
+          "Discovery": {
+            "ShowKeySet": true
+          },
+          "Authentication": {
+            "CookieSameSiteMode": "Lax",
+            "CheckSessionCookieSameSiteMode": "Lax"
+          },
+          "Events": { "RaiseErrorEvents": true, "RaiseSuccessEvents": true, "RaiseInformationEvents": true }
+        }
     volumes:
       - ${ROOT_DIR}/oidc/config:/data
     networks:
