@@ -4,7 +4,7 @@
   AllowedGrantTypes:
     - "authorization_code"
   RequirePkce: false
-  RedirectUris: ["http://localhost:3000", "http://localhost:3000/auth/callback", "http://localhost:3000/auth/sign-out", "http://localhost:3000/account/signed-out"]
+  RedirectUris: ["http://localhost:3000", "http://localhost:3000/auth/callback", "http://localhost:3000/auth/sign-out", "http://localhost:3000/account/signed-out", "https://oauth.pstmn.io/v1/callback", "http://localhost:7777/callback"]
   PostLogoutRedirectUris:
     - "http://localhost:3000/"
   AllowedScopes:
@@ -12,9 +12,20 @@
     - "profile"
     - "email"
     - "offline_access"
-    - "api://local-cads-mis/reports.read"
+    - "reports.read"
   AllowOfflineAccess: true
   AllowAccessTokensViaBrowser: true
+  AccessTokenType: "Jwt"
+  AlwaysSendClientClaims: true
+  AlwaysIncludeUserClaimsInIdToken: true
+  ClientClaimsPrefix: ""
+- ClientId: "local-cads-service"
+  ClientSecrets:
+    - "local-mock-secret"
+  AllowedGrantTypes:
+    - "client_credentials"
+  AllowedScopes:
+    - "reports.read"
   AccessTokenType: "Jwt"
   AlwaysSendClientClaims: true
   ClientClaimsPrefix: ""
