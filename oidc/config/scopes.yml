@@ -1,2 +1,8 @@
 - Name: "reports.read"
   DisplayName: "Read reports"
+- Name: "openid"
+  DisplayName: "OpenID"
+- Name: "profile"
+  DisplayName: "User profile"
+- Name: "email"
+  DisplayName: "Email"
