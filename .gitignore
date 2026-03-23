@@ -4,3 +4,8 @@
 # Env
 .env
 !**/*aws.env
+
+# Temp folders
+/infra/localstack_data
+/postgres-data
+.sonar/

@@ -1,0 +1,45 @@
+services:
+  oidc:
+    image: ghcr.io/soluto/oidc-server-mock:0.6.0
+    container_name: cads-oidc-mock
+    ports:
+      - "5557:80"
+    environment:
+      ISSUER: http://oidc:80
+      PORT: 80
+      USERS_CONFIGURATION_PATH: /data/users.yml
+      CLIENTS_CONFIGURATION_PATH: /data/clients.yml
+      SCOPES_CONFIGURATION_PATH: /data/scopes.yml,
+      API_SCOPES_INLINE: |
+        - Name: "reports.read"
+          DisplayName: "Read reports"
+      API_RESOURCES_INLINE: |
+        - Name: "api://local-cads-mis"
+          Scopes: ["reports.read"]
+      SERVER_OPTIONS_INLINE: |
+        {
+          "IssuerUri": "http://oidc:80",
+          "AccessTokenJwtType": "JWT",
+          "Discovery": {
+            "ShowKeySet": true
+          },
+          "Authentication": {
+            "CookieSameSiteMode": "Lax",
+            "CheckSessionCookieSameSiteMode": "Lax"
+          },
+          "Events": { "RaiseErrorEvents": true, "RaiseSuccessEvents": true, "RaiseInformationEvents": true }
+        }
+    volumes:
+      - ${ROOT_DIR}/oidc/config:/data
+    networks:
+      - cads-tools
+    healthcheck:
+      test: ["CMD", "curl", "http://localhost:80/.well-known/openid-configuration"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+networks:
+  cads-tools:
+    name: cads-tools
+    driver: bridge

@@ -1,0 +1,54 @@
+services:
+  postgres:
+    image: postgres:16.6
+    container_name: cads-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-cads_data_service}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - "./postgres/config:/etc/postgres-config"
+    command: >
+      postgres
+        -c config_file=/etc/postgres-config/postgresql.conf
+        -c hba_file=/etc/postgres-config/pg_hba.conf
+        -c listen_addresses='*'
+    networks:
+      - cads-tools
+
+  redis:
+    image: redis:7.2.3-alpine3.18
+    container_name: cads-redis
+    ports:
+      - "6379:6379"
+    restart: always
+    networks:
+      - cads-tools
+
+  localstack:
+    image: localstack/localstack:3.0.2
+    container_name: cads-localstack
+    ports:
+      - "4566:4566"
+    environment:
+      DEBUG: ${DEBUG:-1}
+      LS_LOG: WARN
+      SERVICES: s3,sqs,firehose
+      LOCALSTACK_HOST: 127.0.0.1
+    volumes:
+      - "./localstack_data:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./localstack/init/start-localstack.sh:/etc/localstack/init/ready.d/start-localstack.sh"
+    networks:
+      - cads-tools
+
+networks:
+  cads-tools:
+    name: cads-tools
+    driver: bridge
+
+volumes:
+  postgres-data:

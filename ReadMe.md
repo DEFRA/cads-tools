@@ -65,6 +65,10 @@ The e2e journey tests will run in three different contexts, and each one has dif
  - Use the OIDC mock
  - Use the shared tools harness
 
+**Set up environment variables:**
+
+ - Create a `.env` file in the root directory following the format of the `harness/.env.example`.
+
 #### e2e tests in GitHub Actions (CI)
 
  - Use the OIDC mock
