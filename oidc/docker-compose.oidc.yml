@@ -5,29 +5,31 @@ services:
     ports:
       - "5557:80"
     environment:
-      ISSUER: http://oidc:80
+      ISSUER: http://cads-oidc-mock
       PORT: 80
       USERS_CONFIGURATION_PATH: /data/users.yml
       CLIENTS_CONFIGURATION_PATH: /data/clients.yml
-      SCOPES_CONFIGURATION_PATH: /data/scopes.yml,
+      SCOPES_CONFIGURATION_PATH: /data/scopes.yml
       API_SCOPES_INLINE: |
         - Name: "reports.read"
           DisplayName: "Read reports"
       API_RESOURCES_INLINE: |
-        - Name: "api://local-cads-mis"
+        - Name: "api://local-cads-cds"
           Scopes: ["reports.read"]
       SERVER_OPTIONS_INLINE: |
         {
-          "IssuerUri": "http://oidc:80",
+          "IssuerUri": "http://cads-oidc-mock",
           "AccessTokenJwtType": "JWT",
-          "Discovery": {
-            "ShowKeySet": true
-          },
+          "Discovery": { "ShowKeySet": true },
           "Authentication": {
             "CookieSameSiteMode": "Lax",
             "CheckSessionCookieSameSiteMode": "Lax"
           },
-          "Events": { "RaiseErrorEvents": true, "RaiseSuccessEvents": true, "RaiseInformationEvents": true }
+          "Events": {
+            "RaiseErrorEvents": true,
+            "RaiseSuccessEvents": true,
+            "RaiseInformationEvents": true
+          }
         }
     volumes:
       - ${ROOT_DIR}/oidc/config:/data
