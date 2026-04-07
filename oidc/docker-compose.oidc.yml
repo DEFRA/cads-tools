@@ -16,6 +16,11 @@ services:
       API_RESOURCES_INLINE: |
         - Name: "api://local-cads-cds"
           Scopes: ["reports.read"]
+          UserClaims:
+            - "email"
+            - "name"
+            - "preferred_username"
+            - "role"
       SERVER_OPTIONS_INLINE: |
         {
           "IssuerUri": "http://cads-oidc-mock",
