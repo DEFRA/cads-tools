@@ -19,7 +19,7 @@
   AlwaysSendClientClaims: true
   AlwaysIncludeUserClaimsInIdToken: true
   ClientClaimsPrefix: ""
-- ClientId: "local-cads-service"
+- ClientId: "local-cads-api-client"
   ClientSecrets:
     - "local-mock-secret"
   AllowedGrantTypes:
@@ -28,4 +28,18 @@
     - "reports.read"
   AccessTokenType: "Jwt"
   AlwaysSendClientClaims: true
+  ClientClaimsPrefix: ""
+- ClientId: "local-cads-test-user-client"
+  ClientSecrets:
+    - "local-mock-secret"
+  AllowedGrantTypes:
+    - "password"
+  AllowedScopes:
+    - "openid"
+    - "profile"
+    - "email"
+    - "reports.read"
+  AccessTokenType: "Jwt"
+  AlwaysSendClientClaims: true
+  AlwaysIncludeUserClaimsInIdToken: true
   ClientClaimsPrefix: ""
