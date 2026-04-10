@@ -8,7 +8,7 @@ COMMAND="${1:-up}"
 
 if [[ "$COMMAND" == "up" ]]; then
   echo "[cads-tools] Starting infra + OIDC..."
-  docker compose \
+  docker compose -p cads-tools \
     -f "$ROOT_DIR/infra/docker-compose.infra.yml" \
     -f "$ROOT_DIR/oidc/docker-compose.oidc.yml" \
     up -d
