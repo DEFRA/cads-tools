@@ -17,7 +17,7 @@ fi
 
 if [[ "$COMMAND" == "down" ]]; then
   echo "[cads-tools] Stopping infra + OIDC..."
-  docker compose \
+  docker compose -p cads-tools \
     -f "$ROOT_DIR/infra/docker-compose.infra.yml" \
     -f "$ROOT_DIR/oidc/docker-compose.oidc.yml" \
     down -v
