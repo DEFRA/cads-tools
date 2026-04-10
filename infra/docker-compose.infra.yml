@@ -47,8 +47,7 @@ services:
 
 networks:
   cads-tools:
-    name: cads-tools
-    driver: bridge
+    external: true
 
 volumes:
   postgres-data:
