@@ -11,16 +11,35 @@ set -e
 # S3
 echo "Creating S3 resources..."
 
-## S3: Create 'cads-internal-bucket' bucket
-existing_bucket=$(awslocal s3api list-buckets \
-  --query "Buckets[?Name=='cads-internal-bucket'].Name" \
+## Create External Bucket
+EXTERNAL_BUCKET_NAME="cads-external-bucket"
+
+existing_external_bucket=$(awslocal s3api list-buckets \
+  --query "Buckets[?Name=='$EXTERNAL_BUCKET_NAME'].Name" \
   --output text)
 
-if [[ "$existing_bucket" == "cads-internal-bucket" ]]; then
-  echo "S3 bucket already exists: cads-internal-bucket"
+if [ "$existing_external_bucket" == "$EXTERNAL_BUCKET_NAME" ]; then
+  echo "S3 bucket already exists: $EXTERNAL_BUCKET_NAME"
 else
   awslocal s3api create-bucket \
-    --bucket cads-internal-bucket \
+    --bucket "$EXTERNAL_BUCKET_NAME" \
+    --region eu-west-2 \
+    --create-bucket-configuration LocationConstraint=eu-west-2
+  echo "S3 bucket created: $EXTERNAL_BUCKET_NAME"
+fi
+
+## Create Internal Bucket
+INTERNAL_BUCKET_NAME="cads-internal-bucket"
+
+existing_internal_bucket=$(awslocal s3api list-buckets \
+  --query "Buckets[?Name=='$INTERNAL_BUCKET_NAME'].Name" \
+  --output text)
+
+if [ "$existing_internal_bucket" == "$INTERNAL_BUCKET_NAME" ]; then
+  echo "S3 bucket already exists: $INTERNAL_BUCKET_NAME"
+else
+  awslocal s3api create-bucket \
+    --bucket "$INTERNAL_BUCKET_NAME" \
     --region eu-west-2 \
     --create-bucket-configuration LocationConstraint=eu-west-2
   echo "S3 bucket created: cads-internal-bucket"
@@ -66,5 +85,14 @@ awslocal sqs set-queue-attributes \
   --queue-url "$queue_url" \
   --attributes "{\"RedrivePolicy\":\"{\\\"deadLetterTargetArn\\\":\\\"$dlq_arn\\\",\\\"maxReceiveCount\\\":\\\"3\\\"}\"}"
 # =================================================================
+
+# Get the 'cads-cds-queue' queue ARN
+queue_arn=$(awslocal sqs get-queue-attributes \
+  --queue-url "$queue_url" \
+  --attribute-name QueueArn \
+  --endpoint-url=http://localhost:4566 \
+  --output text \
+  --query 'Attributes.QueueArn')
+echo "'cads-cds-queue' queue ARN: $queue_arn"
 
 echo "LocalStack Bootstrapping Complete"
