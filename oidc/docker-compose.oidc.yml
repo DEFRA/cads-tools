@@ -37,7 +37,7 @@ services:
           }
         }
     volumes:
-      - ${ROOT_DIR}/oidc/config:/data
+      - "${ROOT_DIR}/oidc/config:/data"
     networks:
       - cads-tools
     healthcheck:
