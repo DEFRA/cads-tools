@@ -14,11 +14,11 @@ echo "Creating S3 resources..."
 ## Create External Bucket
 EXTERNAL_BUCKET_NAME="cads-external-bucket"
 
-existing_internal_bucket=$(awslocal s3api list-buckets \
+existing_external_bucket=$(awslocal s3api list-buckets \
   --query "Buckets[?Name=='$EXTERNAL_BUCKET_NAME'].Name" \
   --output text)
 
-if [ "$existing_internal_bucket" == "$EXTERNAL_BUCKET_NAME" ]; then
+if [ "$existing_external_bucket" == "$EXTERNAL_BUCKET_NAME" ]; then
   echo "S3 bucket already exists: $EXTERNAL_BUCKET_NAME"
 else
   awslocal s3api create-bucket \
