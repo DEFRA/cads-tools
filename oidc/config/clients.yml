@@ -43,3 +43,24 @@
   AlwaysSendClientClaims: true
   AlwaysIncludeUserClaimsInIdToken: true
   ClientClaimsPrefix: ""
+- ClientId: "jt-ci-cads-mis"
+  ClientSecrets:
+    - "jt-ci-mock-secret"
+  AllowedGrantTypes:
+    - "authorization_code"
+  RequirePkce: false
+  RedirectUris: ["http://cads-mis:3000", "http://cads-mis:3000/auth/callback", "http://cads-mis:3000/auth/sign-out", "http://cads-mis:3000/auth/signed-out"]
+  PostLogoutRedirectUris:
+    - "http://cads-mis:3000/"
+  AllowedScopes:
+    - "openid"
+    - "profile"
+    - "email"
+    - "offline_access"
+    - "reports.read"
+  AllowOfflineAccess: true
+  AllowAccessTokensViaBrowser: true
+  AccessTokenType: "Jwt"
+  AlwaysSendClientClaims: true
+  AlwaysIncludeUserClaimsInIdToken: true
+  ClientClaimsPrefix: ""
