@@ -42,6 +42,13 @@ Contains only backend code + backend compose.
 - Uses shared OIDC mock for local dev + E2E
 - Uses Testcontainers OIDC mock for integration tests
 
+### cads-data-seed
+
+Contains data seeding scripts.
+
+- Is a private repository
+- Is cloned and imported as part of the cads-cds github actions pipeline and the shared tools harness
+
 ### cads-tools
 
 Contains:
@@ -53,6 +60,7 @@ Contains:
 - Shared env
 - Shared scripts
 - e2e harness
+- import of data seeding scripts
 
 ### cads-journey-tests
 
