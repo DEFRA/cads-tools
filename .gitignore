@@ -1,6 +1,10 @@
 # Visual Studio Code
 .vscode/
 
+# JetBrains Rider
+.idea/
+*.sln.iml
+
 # Env
 .env
 !**/*aws.env
@@ -9,3 +13,5 @@
 /infra/localstack_data
 /postgres-data
 .sonar/
+
+.DS_Store

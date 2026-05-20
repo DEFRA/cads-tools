@@ -24,6 +24,12 @@ if [[ "$COMMAND" == "up" ]]; then
     -f "$ROOT_DIR/infra/docker-compose.infra.yml" \
     -f "$ROOT_DIR/oidc/docker-compose.oidc.yml" \
     up -d
+  echo "[cads-tools] Waiting for LocalStack to be ready..."
+  until curl -s http://localhost:4566/_localstack/health | grep '"s3": "running"' >/dev/null; do
+    sleep 1
+  done
+  echo "[cads-tools] LocalStack is ready. Syncing SQL seed data..."
+  "$ROOT_DIR/scripts/sync-seed-data.sh"
   exit 0
 fi
 
