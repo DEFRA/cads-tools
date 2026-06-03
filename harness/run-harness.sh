@@ -28,8 +28,12 @@ if [[ "$COMMAND" == "up" ]]; then
   until curl -s http://localhost:4566/_localstack/health | grep '"s3": "running"' >/dev/null; do
     sleep 1
   done
-  echo "[cads-tools] LocalStack is ready. Syncing SQL seed data..."
-  "$ROOT_DIR/scripts/sync-seed-data.sh"
+  echo "[cads-tools] LocalStack is ready..."
+  if [[ "${2:-}" == "--sync-data-seed" ]]; then
+    echo "[cads-tools] Syncing SQL seed data to S3..."
+    "$ROOT_DIR/scripts/sync-seed-data.sh"
+    echo "[cads-tools] SQL seed data has been synced to S3..."
+  fi
   exit 0
 fi
 

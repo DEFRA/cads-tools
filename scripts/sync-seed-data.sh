@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-sed -i 's/\r$//' "$0"
-
 SEED_PATH="../cads-data-seed/sql"
 BUCKET="cads-internal-bucket"
 ENDPOINT="http://localhost:4566"
@@ -30,6 +28,8 @@ done
 AWS_REQUEST_CHECKSUM_CALCULATION=when_required \
 AWS_RESPONSE_CHECKSUM_VALIDATION=when_required \
 aws --endpoint-url="$ENDPOINT" s3 sync "$SEED_PATH" "s3://$BUCKET/sql" \
+    --exclude "*" \
+    --include "*.sql" \
     --delete \
     --no-sign-request
 echo "[cads-tools] SQL seed data sync complete."
