@@ -39,10 +39,15 @@ fi
 
 if [[ "$COMMAND" == "down" ]]; then
   echo "[cads-tools] Stopping infra + OIDC..."
+  VOLUMES_FLAG=""
+  if [[ "${2:-}" == "--clean" ]]; then
+    VOLUMES_FLAG="-v"
+    echo "[cads-tools] --clean specified, volumes will be removed..."
+  fi
   docker compose -p cads-tools \
     -f "$ROOT_DIR/infra/docker-compose.infra.yml" \
     -f "$ROOT_DIR/oidc/docker-compose.oidc.yml" \
-    down -v
+    down $VOLUMES_FLAG
   exit 0
 fi
 
