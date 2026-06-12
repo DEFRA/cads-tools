@@ -39,7 +39,7 @@ services:
     volumes:
       - "${ROOT_DIR}/oidc/config:/data"
     networks:
-      - cads-tools
+      - cads-network
     healthcheck:
       test: ["CMD", "curl", "http://localhost:80/.well-known/openid-configuration"]
       interval: 5s
@@ -47,5 +47,5 @@ services:
       retries: 10
 
 networks:
-  cads-tools:
+  cads-network:
     external: true
