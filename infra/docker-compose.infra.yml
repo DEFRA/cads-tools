@@ -17,7 +17,7 @@ services:
         -c hba_file=/etc/postgres-config/pg_hba.conf
         -c listen_addresses='*'
     networks:
-      - cads-tools
+      - cads-network
 
   redis:
     image: redis:7.2.3-alpine3.18
@@ -26,7 +26,7 @@ services:
       - "6379:6379"
     restart: always
     networks:
-      - cads-tools
+      - cads-network
 
   localstack:
     image: localstack/localstack:3.0.2
@@ -43,10 +43,10 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "${ROOT_DIR}/infra/localstack/init:/etc/localstack/init/ready.d"
     networks:
-      - cads-tools
+      - cads-network
 
 networks:
-  cads-tools:
+  cads-network:
     external: true
 
 volumes:
