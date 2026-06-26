@@ -9,7 +9,7 @@
 
 The CADS Development Tools will provide the shared tools harness. 
 
-These shared tools with then be used by frontend and backend repositories for local development, GitHub Actions pipelines and e2e journey tests.
+These shared tools will then be used by frontend and backend repositories for local development, GitHub Actions pipelines and e2e journey tests.
 
 The purpose for this repository is to solve the multi‑repo problem cleanly so that:
 
@@ -61,6 +61,7 @@ Contains:
 - Shared scripts
 - e2e harness
 - import of data seeding scripts
+- Console utility application for code generation
 
 ### cads-journey-tests
 

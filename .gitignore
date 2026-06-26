@@ -15,3 +15,6 @@
 .sonar/
 
 .DS_Store
+/console/.vs/Cads.Tools.Console
+/console/obj
+/console/bin/Debug/net10.0
