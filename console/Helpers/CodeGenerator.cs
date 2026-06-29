@@ -1,33 +1,44 @@
 ﻿using Npgsql;
+using System.Runtime.Intrinsics.Arm;
 using System.Text;
 
 namespace Cads.Tools.Console.Helpers;
 
 internal class CodeGenerator
 {
+    public const string SchemaEnumCode =
+        "public enum SchemaName" +
+        "\n{" +
+        "\n\t[Description(\"public\")]" +
+        "\n\tPublic = 0," +
+        "\n\t[Description(\"cts\")]" +
+        "\n\tCts = 1," +
+        "\n\t[Description(\"cts_audit\")]" +
+        "\n\tCtsAudit = 2," +
+        "\n\t[Description(\"cts_transactions\")]" +
+        "\n\tCtsTransactions = 3," +
+        "\n\t[Description(\"cads\")]" +
+        "\n\tCads = 4" +
+        "\n}";
+
     public const string TableInfoAttributeCode = 
         "[AttributeUsage(AttributeTargets.Field)]" +
-        "\npublic class TableInfoAttribute : Attribute" +
+        "\npublic class TableInfoAttribute(string name, SchemaName schemaName = SchemaName.Public, string? primaryKey = null) : Attribute" +
         "\n{" +
-        "\n\tpublic string TableName { get; }" +
-        "\n\tpublic string Schema { get; }" +  
-        "\n\tpublic string PrimaryKey { get; }" +
-        "\n\n\tpublic TableInfoAttribute(string tableName, string schema, string primaryKey)" +
-        "\n\t{\n" +
-        "\n\t\tTableName = tableName;" +
-        "\n\t\tSchema = schema;" +
-        "\n\t\tPrimaryKey = primaryKey;" +
-        "\n\t}" +
+        "\n\tpublic string Name { get; } = name;" +
+        "\n\tpublic SchemaName Schema { get; } = schemaName;" +  
+        "\n\tpublic string? PrimaryKey { get; } = primaryKey;" +
         "\n}";
 
     public static async Task<string> GenerateTableEnumAsync(string connectionString, string schema = "public", string? @namespace = null, bool verbose = false)
     {
         var sb = new StringBuilder();
-        sb.AppendLine("// Auto-generated code from PostgreSQL schema");
         sb.Append(RenderNamespace(@namespace));
         sb.AppendLine();
 
         // Add the TableInfo attribute class
+        sb.AppendLine(SchemaEnumCode);
+        sb.AppendLine();
         sb.AppendLine(TableInfoAttributeCode);
         sb.AppendLine();
 
@@ -60,7 +71,7 @@ internal class CodeGenerator
             var (tableName, tableSchema, primaryKey) = tables[i];
             var enumMemberName = ToPascalCase(tableName);
 
-            sb.AppendLine($"\t[TableInfo(\"{tableName}\", \"{tableSchema}\", \"{primaryKey}\")]");
+            sb.AppendLine($"\t[TableInfo(\"{tableName}\", {FormatSchemaName(tableSchema)}, \"{primaryKey}\")]");
             sb.Append($"\t{enumMemberName}");
 
             if (i < tables.Count - 1)
@@ -81,7 +92,6 @@ internal class CodeGenerator
     public static async Task<string> GenerateClassFromSchemaAsync(string connectionString, string schema = "public", string? @namespace = null, bool verbose = false)
     {   
         var sb = new StringBuilder();
-        sb.AppendLine("// Auto-generated code from PostgreSQL schema");
         sb.Append(RenderNamespace(@namespace));
         sb.AppendLine();
 
@@ -148,6 +158,19 @@ internal class CodeGenerator
         return sb.ToString();
     }
 
+    static string FormatSchemaName(string schema)
+    {
+        return schema switch
+        {
+            "public" => "SchemaName.Public",
+            "cts" => "SchemaName.Cts",
+            "cts_audit" => "SchemaName.CtsAudit",
+            "cts_transactions" => "SchemaName.CtsTransactions",
+            "cads" => "SchemaName.Cads",
+            _ => throw new ArgumentException($"Unknown schema: {schema}")
+        };
+    }
+
     static string MapPostgresToCSharp(string postgresType, bool isNullable)
     {
         var csType = postgresType.ToLower() switch
@@ -200,11 +223,16 @@ internal class CodeGenerator
 
     static string RenderNamespace(string? @namespace)
     {
+        var sb = new StringBuilder();
+        sb.AppendLine("// Auto-generated code from PostgreSQL schema");
+        sb.AppendLine("using System.ComponentModel;");
+       
         if (!string.IsNullOrWhiteSpace(@namespace))
         {
-            return $"namespace {@namespace};";
+            sb.AppendLine();
+            sb.AppendLine($"namespace {@namespace};");
         }
 
-        return string.Empty;
+        return sb.ToString();
     }
 }
