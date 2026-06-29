@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Cads.Tools": {
+      "commandName": "Project",
+      "commandLineArgs": "generate\r\n--connection \"Host=localhost;Port=5432;Database=cads_data_service;Username=postgres;Password=postgres;\"\r\n--schema cts_transactions\r\n--type enum\r\n--output \"C:\\Projects\\defra\\cads-tools\\console\\output\"\r\n--verbose"
+    }
+  }
+}

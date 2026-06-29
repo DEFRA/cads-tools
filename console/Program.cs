@@ -13,12 +13,6 @@ var typeOption = new Option<string>("--type")
     Description = "The type of code to generate (class, enum)"
 };
 
-var outputFileOption = new Option<string>("--output")
-{
-    Description = "The path to the output file"
-};
-
-
 typeOption.Validators.Add(result =>
 {
     var value = result.GetValueOrDefault<string>();
@@ -41,6 +35,11 @@ var schemaOption = new Option<string>("--schema")
 var namespaceOption = new Option<string>("--namespace")
 {
     Description = "The namespace for the generated code"
+};
+
+var outputFileOption = new Option<string>("--output")
+{
+    Description = "The path to the output file"
 };
 
 var verboseOption = new Option<bool>("--verbose")
@@ -69,13 +68,15 @@ generateCommand.SetAction(async (parseResult) =>
     {
         verbose = parseResult.GetValue<bool>(verboseOption);
         var connectionString = parseResult.GetValue<string>(connectionStringOption)!;
-        var outputFile = parseResult.GetValue<string>(outputFileOption);
         var @namespace = parseResult.GetValue<string>(namespaceOption) ?? string.Empty;
         var schema = parseResult.GetValue<string>(schemaOption) ?? "public";
         var type = parseResult.GetValue<string>(typeOption) ?? "class";
+        var outputFile = parseResult.GetValue<string>(outputFileOption);
 
-        if (verbose) System.Console.WriteLine("Starting code generation...");
-        if (verbose) System.Console.WriteLine($"Connecting to database: {connectionString}");
+        outputFile = Path.Combine(outputFile, string.Concat(schema, "_", type, ".cs"));
+
+        if (verbose) Console.WriteLine("Starting code generation...");
+        if (verbose) Console.WriteLine($"Connecting to database: {connectionString}");
 
         var generatedCode = string.Empty;
 
@@ -92,7 +93,7 @@ generateCommand.SetAction(async (parseResult) =>
         if (!string.IsNullOrEmpty(outputFile))
         {
             await File.WriteAllTextAsync(outputFile, generatedCode, Encoding.UTF8);
-            if (verbose) System.Console.WriteLine($"Code generated successfully and written to: {outputFile}");
+            if (verbose) Console.WriteLine($"Code generated successfully and written to: {outputFile}");
         }
         else
         {
@@ -101,8 +102,8 @@ generateCommand.SetAction(async (parseResult) =>
     }
     catch (Exception ex)
     {
-        System.Console.Error.WriteLine($"✗ Error: {ex.Message}");
-        if (verbose) System.Console.Error.WriteLine($"Stack trace: {ex.StackTrace}");
+        Console.Error.WriteLine($"✗ Error: {ex.Message}");
+        if (verbose) Console.Error.WriteLine($"Stack trace: {ex.StackTrace}");
         Environment.Exit(1);
     }
 });
