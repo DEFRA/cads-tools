@@ -10,9 +10,9 @@ fi
 COMMAND="${1:-up}"
 
 ensure_network() {
-  if ! docker network inspect cads-tools >/dev/null 2>&1; then
-    echo "[platform] Creating cads-tools network..."
-    docker network create cads-tools
+  if ! docker network inspect cads-network >/dev/null 2>&1; then
+    echo "[platform] Creating cads network..."
+    docker network create cads-network
   fi
   return $?
 }
@@ -20,7 +20,7 @@ ensure_network() {
 if [[ "$COMMAND" == "up" ]]; then
   echo "[cads-tools] Starting infra + OIDC..."
   ensure_network
-  docker compose -p cads-tools \
+  docker compose -p cads \
     -f "$ROOT_DIR/infra/docker-compose.infra.yml" \
     -f "$ROOT_DIR/oidc/docker-compose.oidc.yml" \
     up -d
@@ -44,7 +44,7 @@ if [[ "$COMMAND" == "down" ]]; then
     VOLUMES_FLAG="-v"
     echo "[cads-tools] --clean specified, volumes will be removed..."
   fi
-  docker compose -p cads-tools \
+  docker compose -p cads \
     -f "$ROOT_DIR/infra/docker-compose.infra.yml" \
     -f "$ROOT_DIR/oidc/docker-compose.oidc.yml" \
     down $VOLUMES_FLAG
