@@ -50,27 +50,29 @@ echo "Creating SQS resources..."
 
 ## 'cads-cds-queue'
 
-### Create 'cads-cds-queue' DLQ
+### Create 'cads-cds-queue.fifo' DLQ
 dlq_url=$(awslocal sqs create-queue \
-  --queue-name cads-cds-queue-deadletter \
+  --queue-name cads-cds-queue-deadletter.fifo \
+  --attributes '{"FifoQueue":"true","ContentBasedDeduplication":"true"}' \
   --output text \
   --query 'QueueUrl')
-echo "'cads-cds-queue' DLQ created: $dlq_url"
+echo "'cads-cds-queue.fifo' DLQ created: $dlq_url"
 
-### Get the ARN of the 'cads-cds-queue' DLQ, which is needed for the redrive policy
+### Get the ARN of the 'cads-cds-queue.fifo' DLQ, which is needed for the redrive policy
 dlq_arn=$(awslocal sqs get-queue-attributes \
   --queue-url "$dlq_url" \
   --attribute-names QueueArn \
   --output text \
   --query 'Attributes.QueueArn')
-echo "'cads-cds-queue' DLQ ARN: $dlq_arn"
+echo "'cads-cds-queue.fifo' DLQ ARN: $dlq_arn"
 
-### Create 'cads-cds-queue' queue
+### Create 'cads-cds-queue.fifo' queue
 queue_url=$(awslocal sqs create-queue \
-  --queue-name cads-cds-queue \
+  --queue-name cads-cds-queue.fifo \
+  --attributes '{"FifoQueue":"true","ContentBasedDeduplication":"true"}' \
   --output text \
   --query 'QueueUrl')
-echo "'cads-cds-queue' queue created: $queue_url"
+echo "'cads-cds-queue.fifo' queue created: $queue_url"
 
 ### Define the Redrive Policy, linking the main queue to the DLQ.
 redrive_policy_json=$(cat <<EOF
@@ -81,44 +83,46 @@ redrive_policy_json=$(cat <<EOF
 EOF
 )
 
-### Set redrive policy for 'cads-cds-queue' DLQ
-echo "Set redrive policy for 'cads-cds-queue' DLQ..."
+### Set redrive policy for 'cads-cds-queue.fifo' DLQ
+echo "Set redrive policy for 'cads-cds-queue.fifo' DLQ..."
 awslocal sqs set-queue-attributes \
   --queue-url "$queue_url" \
   --attributes "{\"RedrivePolicy\":\"{\\\"deadLetterTargetArn\\\":\\\"$dlq_arn\\\",\\\"maxReceiveCount\\\":\\\"3\\\"}\"}"
 
-### Get the 'cads-cds-queue' queue ARN
+### Get the 'cads-cds-queue.fifo' queue ARN
 queue_arn=$(awslocal sqs get-queue-attributes \
   --queue-url "$queue_url" \
   --attribute-name QueueArn \
   --endpoint-url=http://localhost:4566 \
   --output text \
   --query 'Attributes.QueueArn')
-echo "'cads-cds-queue' queue ARN: $queue_arn"
+echo "'cads-cds-queue.fifo' queue ARN: $queue_arn"
 
-## 'cads-bridge-queue'
+## 'cads-bridge-queue.fifo'
 
-### Create 'cads-bridge-queue' DLQ
+### Create 'cads-bridge-queue.fifo' DLQ
 dlq_url=$(awslocal sqs create-queue \
-  --queue-name cads-bridge-queue-deadletter \
+  --queue-name cads-bridge-queue-deadletter.fifo \
+  --attributes '{"FifoQueue":"true","ContentBasedDeduplication":"true"}' \
   --output text \
   --query 'QueueUrl')
-echo "'cads-bridge-queue' DLQ created: $dlq_url"
+echo "'cads-bridge-queue.fifo' DLQ created: $dlq_url"
 
-### Get the ARN of the 'cads-bridge-queue' DLQ, which is needed for the redrive policy
+### Get the ARN of the 'cads-bridge-queue.fifo' DLQ, which is needed for the redrive policy
 dlq_arn=$(awslocal sqs get-queue-attributes \
   --queue-url "$dlq_url" \
   --attribute-names QueueArn \
   --output text \
   --query 'Attributes.QueueArn')
-echo "'cads-bridge-queue' DLQ ARN: $dlq_arn"
+echo "'cads-bridge-queue.fifo' DLQ ARN: $dlq_arn"
 
-### Create 'cads-bridge-queue' queue
+### Create 'cads-bridge-queue.fifo' queue
 queue_url=$(awslocal sqs create-queue \
-  --queue-name cads-bridge-queue \
+  --queue-name cads-bridge-queue.fifo \
+  --attributes '{"FifoQueue":"true","ContentBasedDeduplication":"true"}' \
   --output text \
   --query 'QueueUrl')
-echo "'cads-bridge-queue' queue created: $queue_url"
+echo "'cads-bridge-queue.fifo' queue created: $queue_url"
 
 ### Define the Redrive Policy, linking the main queue to the DLQ.
 redrive_policy_json=$(cat <<EOF
@@ -129,19 +133,19 @@ redrive_policy_json=$(cat <<EOF
 EOF
 )
 
-### Set redrive policy for 'cads-bridge-queue' DLQ
-echo "Set redrive policy for 'cads-bridge-queue' DLQ..."
+### Set redrive policy for 'cads-bridge-queue.fifo' DLQ
+echo "Set redrive policy for 'cads-bridge-queue.fifo' DLQ..."
 awslocal sqs set-queue-attributes \
   --queue-url "$queue_url" \
   --attributes "{\"RedrivePolicy\":\"{\\\"deadLetterTargetArn\\\":\\\"$dlq_arn\\\",\\\"maxReceiveCount\\\":\\\"3\\\"}\"}"
 
-### Get the 'cads-bridge-queue' queue ARN
+### Get the 'cads-bridge-queue.fifo' queue ARN
 queue_arn=$(awslocal sqs get-queue-attributes \
   --queue-url "$queue_url" \
   --attribute-name QueueArn \
   --endpoint-url=http://localhost:4566 \
   --output text \
   --query 'Attributes.QueueArn')
-echo "'cads-bridge-queue' queue ARN: $queue_arn"
+echo "'cads-bridge-queue.fifo' queue ARN: $queue_arn"
 
 echo "LocalStack Bootstrapping Complete"
