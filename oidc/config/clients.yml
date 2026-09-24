@@ -13,7 +13,6 @@
     - "email"
     - "offline_access"
     - "reports.read"
-    - "db.admin.execute"
   AllowOfflineAccess: true
   AllowAccessTokensViaBrowser: true
   AccessTokenType: "Jwt"
@@ -40,6 +39,7 @@
     - "profile"
     - "email"
     - "reports.read"
+    - "db.admin.execute"
   AccessTokenType: "Jwt"
   AlwaysSendClientClaims: true
   AlwaysIncludeUserClaimsInIdToken: true

@@ -17,7 +17,7 @@ services:
           DisplayName: "Execute DB admin commands"
       API_RESOURCES_INLINE: |
         - Name: "api://local-cads-cds"
-          Scopes: ["reports.read"]
+          Scopes: ["reports.read", "db.admin.execute"]
           UserClaims:
             - "email"
             - "name"
