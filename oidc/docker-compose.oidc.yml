@@ -13,6 +13,8 @@ services:
       API_SCOPES_INLINE: |
         - Name: "reports.read"
           DisplayName: "Read reports"
+        - Name: "db.admin.execute"
+          DisplayName: "Execute DB admin commands"
       API_RESOURCES_INLINE: |
         - Name: "api://local-cads-cds"
           Scopes: ["reports.read"]
@@ -20,7 +22,7 @@ services:
             - "email"
             - "name"
             - "preferred_username"
-            - "role"
+            - "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
       SERVER_OPTIONS_INLINE: |
         {
           "IssuerUri": "http://cads-oidc-mock",
