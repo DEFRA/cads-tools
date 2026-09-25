@@ -39,6 +39,7 @@
     - "profile"
     - "email"
     - "reports.read"
+    - "db.admin.execute"
   AccessTokenType: "Jwt"
   AlwaysSendClientClaims: true
   AlwaysIncludeUserClaimsInIdToken: true
