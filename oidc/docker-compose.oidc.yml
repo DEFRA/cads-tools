@@ -22,7 +22,7 @@ services:
             - "email"
             - "name"
             - "preferred_username"
-            - "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+            - "role"
       SERVER_OPTIONS_INLINE: |
         {
           "IssuerUri": "http://cads-oidc-mock",
