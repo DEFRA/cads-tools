@@ -1,5 +1,7 @@
 - Name: "reports.read"
   DisplayName: "Read reports"
+- Name: "db.admin.execute"
+  DisplayName: "Execute DB admin commands"
 - Name: "openid"
   DisplayName: "OpenID"
 - Name: "profile"
