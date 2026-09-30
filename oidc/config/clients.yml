@@ -1,3 +1,4 @@
+# Client configuration for the cads-mis UI when running within Docker (locally + GH Actions)
 - ClientId: "local-cads-mis"
   ClientSecrets:
     - "local-mock-secret"
@@ -19,31 +20,8 @@
   AlwaysSendClientClaims: true
   AlwaysIncludeUserClaimsInIdToken: true
   ClientClaimsPrefix: ""
-- ClientId: "local-cads-api-client"
-  ClientSecrets:
-    - "local-mock-secret"
-  AllowedGrantTypes:
-    - "client_credentials"
-  AllowedScopes:
-    - "reports.read"
-  AccessTokenType: "Jwt"
-  AlwaysSendClientClaims: true
-  ClientClaimsPrefix: ""
-- ClientId: "local-cads-test-user-client"
-  ClientSecrets:
-    - "local-mock-secret"
-  AllowedGrantTypes:
-    - "password"
-  AllowedScopes:
-    - "openid"
-    - "profile"
-    - "email"
-    - "reports.read"
-    - "db.admin.execute"
-  AccessTokenType: "Jwt"
-  AlwaysSendClientClaims: true
-  AlwaysIncludeUserClaimsInIdToken: true
-  ClientClaimsPrefix: ""
+
+# Client configuration for the cads-mis UI when running as part of the Journey Tests
 - ClientId: "jt-ci-cads-mis"
   ClientSecrets:
     - "jt-ci-mock-secret"
@@ -59,6 +37,31 @@
     - "email"
     - "offline_access"
     - "reports.read"
+  AllowOfflineAccess: true
+  AllowAccessTokensViaBrowser: true
+  AccessTokenType: "Jwt"
+  AlwaysSendClientClaims: true
+  AlwaysIncludeUserClaimsInIdToken: true
+  ClientClaimsPrefix: ""
+
+  # Client configuration for the cads-admin-frontend UI when running within Docker (locally + GH Actions)
+- ClientId: "local-cads-admin-frontend"
+  ClientSecrets:
+    - "local-mock-secret"
+  AllowedGrantTypes:
+    - "authorization_code"
+  RequirePkce: false
+  RedirectUris: ["http://localhost:3010", "http://localhost:3010/auth/callback", "http://localhost:3010/auth/sign-out", "http://localhost:3010/auth/signed-out", "https://oauth.pstmn.io/v1/callback", "http://localhost:7777/callback"]
+  PostLogoutRedirectUris:
+    - "http://localhost:3010/"
+  AllowedScopes:
+    - "openid"
+    - "profile"
+    - "email"
+    - "offline_access"
+    - "db.admin.execute"
+    - "admin.s3.manager"
+    - "admin.queue.manager"
   AllowOfflineAccess: true
   AllowAccessTokensViaBrowser: true
   AccessTokenType: "Jwt"

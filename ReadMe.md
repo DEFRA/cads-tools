@@ -33,7 +33,24 @@ Contains UI code + UI compose.
 - References tools repo in GitHub Actions
 - Uses shared OIDC mock for local dev + e2e
 
+### cads-admin frontend
+
+Contains UI code + UI compose.
+
+- Has its own compose
+- References tools repo in GitHub Actions
+- Uses shared OIDC mock for local dev + e2e
+
 ### cads-cds backend
+
+Contains only backend code + backend compose.
+
+- Has its own compose
+- References tools repo in GitHub Actions
+- Uses shared OIDC mock for local dev + E2E
+- Uses Testcontainers OIDC mock for integration tests
+
+### cads-bridge backend
 
 Contains only backend code + backend compose.
 
