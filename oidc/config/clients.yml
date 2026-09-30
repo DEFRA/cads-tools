@@ -44,8 +44,8 @@
   AlwaysIncludeUserClaimsInIdToken: true
   ClientClaimsPrefix: ""
 
-  # Client configuration for the cads-admin UI when running within Docker (locally + GH Actions)
-- ClientId: "local-cads-admin"
+  # Client configuration for the cads-admin-frontend UI when running within Docker (locally + GH Actions)
+- ClientId: "local-cads-admin-frontend"
   ClientSecrets:
     - "local-mock-secret"
   AllowedGrantTypes:
