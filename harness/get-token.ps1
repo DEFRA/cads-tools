@@ -11,7 +11,7 @@ Optional. Overrides the default scopes for the chosen app (space separated).
 .EXAMPLE
 ./get-token.ps1
 ./get-token.ps1 -App admin
-./get-token.ps1 -App admin -Scopes "openid profile email db.admin.execute"
+./get-token.ps1 -App admin -Scopes "openid profile email admin.db.execute"
 #>
 param(
     [ValidateSet("mis", "admin")]
@@ -31,7 +31,7 @@ $Apps = @{
     admin = @{
         ClientId     = "local-cads-admin-frontend"
         ClientSecret = "local-mock-secret"
-        Scopes       = "openid profile email offline_access db.admin.execute admin.s3.manager admin.queue.manager"
+        Scopes       = "openid profile email offline_access admin.db.execute admin.s3.manager admin.queue.manager"
         TestUser     = "cads-admin-user"
     }
 }

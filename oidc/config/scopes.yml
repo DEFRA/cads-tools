@@ -1,6 +1,6 @@
 - Name: "reports.read"
   DisplayName: "Read reports"
-- Name: "db.admin.execute"
+- Name: "admin.db.execute"
   DisplayName: "Execute DB admin commands"
 - Name: "admin.s3.manager"
   DisplayName: "Manage S3 administration tasks"

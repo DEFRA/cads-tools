@@ -13,7 +13,7 @@ services:
       API_SCOPES_INLINE: |
         - Name: "reports.read"
           DisplayName: "Read reports"
-        - Name: "db.admin.execute"
+        - Name: "admin.db.execute"
           DisplayName: "Execute DB admin commands"
         - Name: "admin.s3.manager"
           DisplayName: "Manage S3 administration tasks"
@@ -21,7 +21,7 @@ services:
           DisplayName: "Manage queue administration tasks"
       API_RESOURCES_INLINE: |
         - Name: "api://local-cads-cds"
-          Scopes: ["reports.read", "db.admin.execute", "admin.s3.manager", "admin.queue.manager"]
+          Scopes: ["reports.read", "admin.db.execute", "admin.s3.manager", "admin.queue.manager"]
           UserClaims:
             - "email"
             - "name"
