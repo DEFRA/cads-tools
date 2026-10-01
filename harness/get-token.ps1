@@ -1,9 +1,52 @@
-$ClientId = "local-cads-mis"
-$ClientSecret = "local-mock-secret"
-$AuthUrl = "http://localhost:5557/connect/authorize"
-$TokenUrl = "http://localhost:5557/connect/token"
+<#
+.SYNOPSIS
+Gets tokens from the local OIDC mock using the authorization code flow.
+
+.PARAMETER App
+Which UI client to sign in as: 'mis' (default) or 'admin'.
+
+.PARAMETER Scopes
+Optional. Overrides the default scopes for the chosen app (space separated).
+
+.EXAMPLE
+./get-token.ps1
+./get-token.ps1 -App admin
+./get-token.ps1 -App admin -Scopes "openid profile email db.admin.execute"
+#>
+param(
+    [ValidateSet("mis", "admin")]
+    [string]$App = "mis",
+
+    [string]$Scopes
+)
+
+# Client details must match oidc/config/clients.yml
+$Apps = @{
+    mis = @{
+        ClientId     = "local-cads-mis"
+        ClientSecret = "local-mock-secret"
+        Scopes       = "openid profile email offline_access reports.read"
+        TestUser     = "mip-viewer-user"
+    }
+    admin = @{
+        ClientId     = "local-cads-admin-frontend"
+        ClientSecret = "local-mock-secret"
+        Scopes       = "openid profile email offline_access db.admin.execute admin.s3.manager admin.queue.manager"
+        TestUser     = "cads-admin-user"
+    }
+}
+
+$Selected     = $Apps[$App]
+$ClientId     = $Selected.ClientId
+$ClientSecret = $Selected.ClientSecret
+if (-not $Scopes) { $Scopes = $Selected.Scopes }
+
+$AuthUrl     = "http://localhost:5557/connect/authorize"
+$TokenUrl    = "http://localhost:5557/connect/token"
 $RedirectUri = "http://localhost:7777/callback"
-$Scopes = "openid profile email offline_access reports.read"
+
+Write-Host "App: $App (client: $ClientId)"
+Write-Host "Sign in as: $($Selected.TestUser) / password"
 
 # Encode scopes
 $EncodedScopes = [System.Net.WebUtility]::UrlEncode($Scopes)
@@ -37,8 +80,7 @@ $Request = $Context.Request
 $Response = $Context.Response
 
 $Code = $Request.QueryString["code"]
-
-Write-Host "Received authorization code: $Code"
+$AuthError = $Request.QueryString["error"]
 
 # Respond to browser
 $ResponseString = "<html><body>You may close this window.</body></html>"
@@ -48,6 +90,12 @@ $Response.OutputStream.Write($Buffer, 0, $Buffer.Length)
 $Response.OutputStream.Close()
 $Listener.Stop()
 
+if (-not $Code) {
+    Write-Error "No authorization code received. Error from server: $AuthError"
+    exit 1
+}
+
+Write-Host "Received authorization code: $Code"
 Write-Host "Exchanging code for tokens..."
 
 # Step 2 — Exchange the code for tokens
