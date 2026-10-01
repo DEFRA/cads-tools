@@ -59,7 +59,7 @@
     - "profile"
     - "email"
     - "offline_access"
-    - "db.admin.execute"
+    - "admin.db.execute"
     - "admin.s3.manager"
     - "admin.queue.manager"
   AllowOfflineAccess: true

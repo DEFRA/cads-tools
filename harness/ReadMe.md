@@ -33,7 +33,7 @@ Signs in through the browser using the authorization code flow and prints the to
 | App     | Client                      | Test user         | Default scopes                                                                         |
 |---------|-----------------------------|-------------------|----------------------------------------------------------------------------------------|
 | `mis`   | `local-cads-mis`            | `mip-viewer-user` | `reports.read`                                                                         |
-| `admin` | `local-cads-admin-frontend` | `cads-admin-user` | `db.admin.execute`, `admin.s3.manager`, `admin.queue.manager`                          |
+| `admin` | `local-cads-admin-frontend` | `cads-admin-user` | `admin.db.execute`, `admin.s3.manager`, `admin.queue.manager`                          |
 
 Both use the password `password`. Use `-Scopes "openid profile email ..."` to override the scopes.
 Client details must match `oidc/config/clients.yml`.
