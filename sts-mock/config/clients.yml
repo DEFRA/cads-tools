@@ -1,0 +1,91 @@
+# Mock AWS STS callers (outbound identity federation) for local dev + GH Actions.
+# Each client stands in for one calling service. Request a token with the
+# client_credentials grant; the requested scope selects the audience (aud).
+# The nested "https://sts.amazonaws.com/" claim mirrors the real AWS token shape.
+# Local values: org_id = o-localmock, principal_tags.Environment = local.
+
+# cads-bridge calling cads-data-service
+- ClientId: "local-sts-cads-bridge"
+  ClientSecrets:
+    - "local-mock-secret"
+  AllowedGrantTypes:
+    - "client_credentials"
+  AllowedScopes:
+    - "sts.cads-cds"
+    - "sts.cads-bridge"
+  AccessTokenType: "Jwt"
+  AlwaysSendClientClaims: true
+  ClientClaimsPrefix: ""
+  Claims:
+    - Type: "https://sts.amazonaws.com/"
+      ValueType: "json"
+      Value: '{"aws_account":"000000000000","org_id":"o-localmock","source_region":"eu-west-2","principal_tags":{"ServiceName":"cads-bridge","Environment":"local"}}'
+
+# cads-data-service calling cads-bridge
+- ClientId: "local-sts-cads-data-service"
+  ClientSecrets:
+    - "local-mock-secret"
+  AllowedGrantTypes:
+    - "client_credentials"
+  AllowedScopes:
+    - "sts.cads-cds"
+    - "sts.cads-bridge"
+  AccessTokenType: "Jwt"
+  AlwaysSendClientClaims: true
+  ClientClaimsPrefix: ""
+  Claims:
+    - Type: "https://sts.amazonaws.com/"
+      ValueType: "json"
+      Value: '{"aws_account":"000000000000","org_id":"o-localmock","source_region":"eu-west-2","principal_tags":{"ServiceName":"cads-data-service","Environment":"local"}}'
+
+# Negative test callers: each must be REJECTED by a receiving service.
+# Wrong AWS organisation (ServiceName is valid, org_id is not trusted)
+- ClientId: "local-sts-wrong-org"
+  ClientSecrets:
+    - "local-mock-secret"
+  AllowedGrantTypes:
+    - "client_credentials"
+  AllowedScopes:
+    - "sts.cads-cds"
+    - "sts.cads-bridge"
+  AccessTokenType: "Jwt"
+  AlwaysSendClientClaims: true
+  ClientClaimsPrefix: ""
+  Claims:
+    - Type: "https://sts.amazonaws.com/"
+      ValueType: "json"
+      Value: '{"aws_account":"999999999999","org_id":"o-someoneelse","source_region":"eu-west-2","principal_tags":{"ServiceName":"cads-bridge","Environment":"local"}}'
+
+# Wrong environment (a prod token used against local)
+- ClientId: "local-sts-wrong-env"
+  ClientSecrets:
+    - "local-mock-secret"
+  AllowedGrantTypes:
+    - "client_credentials"
+  AllowedScopes:
+    - "sts.cads-cds"
+    - "sts.cads-bridge"
+  AccessTokenType: "Jwt"
+  AlwaysSendClientClaims: true
+  ClientClaimsPrefix: ""
+  Claims:
+    - Type: "https://sts.amazonaws.com/"
+      ValueType: "json"
+      Value: '{"aws_account":"000000000000","org_id":"o-localmock","source_region":"eu-west-2","principal_tags":{"ServiceName":"cads-bridge","Environment":"prod"}}'
+
+# ServiceName that is not in Acl:StsClients
+- ClientId: "local-sts-unknown-service"
+  ClientSecrets:
+    - "local-mock-secret"
+  AllowedGrantTypes:
+    - "client_credentials"
+  AllowedScopes:
+    - "sts.cads-cds"
+    - "sts.cads-bridge"
+  AccessTokenType: "Jwt"
+  AlwaysSendClientClaims: true
+  ClientClaimsPrefix: ""
+  Claims:
+    - Type: "https://sts.amazonaws.com/"
+      ValueType: "json"
+      Value: '{"aws_account":"000000000000","org_id":"o-localmock","source_region":"eu-west-2","principal_tags":{"ServiceName":"not-on-the-allow-list","Environment":"local"}}'

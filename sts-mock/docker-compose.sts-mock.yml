@@ -1,0 +1,39 @@
+services:
+  sts-mock:
+    image: ghcr.io/soluto/oidc-server-mock:0.6.0
+    container_name: cads-sts-mock
+    ports:
+      - "5567:80"
+    environment:
+      ISSUER: http://cads-sts-mock
+      PORT: 80
+      CLIENTS_CONFIGURATION_PATH: /data/clients.yml
+      API_SCOPES_INLINE: |
+        - Name: "sts.cads-cds"
+          DisplayName: "Audience: cads-data-service"
+        - Name: "sts.cads-bridge"
+          DisplayName: "Audience: cads-bridge"
+      API_RESOURCES_INLINE: |
+        - Name: "sts://local-cads-cds"
+          Scopes: ["sts.cads-cds"]
+        - Name: "sts://local-cads-bridge"
+          Scopes: ["sts.cads-bridge"]
+      SERVER_OPTIONS_INLINE: |
+        {
+          "IssuerUri": "http://cads-sts-mock",
+          "AccessTokenJwtType": "JWT",
+          "Discovery": { "ShowKeySet": true }
+        }
+    volumes:
+      - "${ROOT_DIR}/sts-mock/config:/data"
+    networks:
+      - cads-network
+    healthcheck:
+      test: ["CMD", "curl", "http://localhost:80/.well-known/openid-configuration"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+networks:
+  cads-network:
+    external: true
