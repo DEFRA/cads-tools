@@ -18,11 +18,12 @@ ensure_network() {
 }
 
 if [[ "$COMMAND" == "up" ]]; then
-  echo "[cads-tools] Starting infra + OIDC..."
+  echo "[cads-tools] Starting infra + OIDC + STS mock..."
   ensure_network
   docker compose -p cads \
     -f "$ROOT_DIR/infra/docker-compose.infra.yml" \
     -f "$ROOT_DIR/oidc/docker-compose.oidc.yml" \
+    -f "$ROOT_DIR/sts-mock/docker-compose.sts-mock.yml" \
     up -d
   echo "[cads-tools] Waiting for LocalStack to be ready..."
   until curl -s http://localhost:4566/_localstack/health | grep '"s3": "running"' >/dev/null; do
@@ -38,7 +39,7 @@ if [[ "$COMMAND" == "up" ]]; then
 fi
 
 if [[ "$COMMAND" == "down" ]]; then
-  echo "[cads-tools] Stopping infra + OIDC..."
+  echo "[cads-tools] Stopping infra + OIDC + STS mock..."
   VOLUMES_FLAG=""
   if [[ "${2:-}" == "--clean" ]]; then
     VOLUMES_FLAG="-v"
@@ -47,6 +48,7 @@ if [[ "$COMMAND" == "down" ]]; then
   docker compose -p cads \
     -f "$ROOT_DIR/infra/docker-compose.infra.yml" \
     -f "$ROOT_DIR/oidc/docker-compose.oidc.yml" \
+    -f "$ROOT_DIR/sts-mock/docker-compose.sts-mock.yml" \
     down $VOLUMES_FLAG
   exit 0
 fi
