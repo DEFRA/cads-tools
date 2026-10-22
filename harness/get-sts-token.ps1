@@ -91,5 +91,3 @@ catch {
     Write-Host $_.Exception.Message -ForegroundColor Red
 }
 
-Write-Host ""
-Read-Host "Press Enter to close"
