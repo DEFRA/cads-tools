@@ -3,7 +3,8 @@
 # client_credentials grant; the requested scope selects the audience (aud).
 # The nested "https://sts.amazonaws.com/" claim mirrors the real AWS token shape.
 # sub is the caller role ARN, as in real AWS tokens.
-# Local values: org_id = o-localmock, principal_tags.Environment = local.
+# Values copied from a real CDP dev token (cads-bridge): org_id, aws_account, ou_path, tags.
+# Token lifetime is 300 seconds, like real AWS.
 
 # cads-bridge calling cads-data-service
 - ClientId: "local-sts-cads-bridge"
@@ -12,17 +13,18 @@
   AllowedGrantTypes:
     - "client_credentials"
   AllowedScopes:
-    - "sts.cads-cds"
+    - "sts.cads-data-service"
     - "sts.cads-bridge"
   AccessTokenType: "Jwt"
   AlwaysSendClientClaims: true
   ClientClaimsPrefix: ""
+  AccessTokenLifetime: 300
   Claims:
     - Type: "https://sts.amazonaws.com/"
       ValueType: "json"
-      Value: '{"aws_account":"000000000000","org_id":"o-localmock","source_region":"eu-west-2","principal_tags":{"ServiceName":"cads-bridge","Environment":"local"}}'
+      Value: '{"org_id":"o-kl1ac4xahf","aws_account":"332499610595","ou_path":["o-kl1ac4xahf/r-q208/ou-q208-vj15xzri/ou-q208-9qq4mo0y/"],"source_region":"eu-west-2","principal_id":"arn:aws:iam::332499610595:role/cads-bridge","principal_tags":{"ServiceCode":"CAS","Organization":"DEFRA","Platform":"cdp","ServiceName":"cads-bridge","ServiceType":"Microservice","Service":"cads-bridge","Environment":"dev"}}'
     - Type: "sub"
-      Value: "arn:aws:iam::000000000000:role/cads-bridge"
+      Value: "arn:aws:iam::332499610595:role/cads-bridge"
 
 # cads-data-service calling cads-bridge
 - ClientId: "local-sts-cads-data-service"
@@ -31,17 +33,18 @@
   AllowedGrantTypes:
     - "client_credentials"
   AllowedScopes:
-    - "sts.cads-cds"
+    - "sts.cads-data-service"
     - "sts.cads-bridge"
   AccessTokenType: "Jwt"
   AlwaysSendClientClaims: true
   ClientClaimsPrefix: ""
+  AccessTokenLifetime: 300
   Claims:
     - Type: "https://sts.amazonaws.com/"
       ValueType: "json"
-      Value: '{"aws_account":"000000000000","org_id":"o-localmock","source_region":"eu-west-2","principal_tags":{"ServiceName":"cads-data-service","Environment":"local"}}'
+      Value: '{"org_id":"o-kl1ac4xahf","aws_account":"332499610595","ou_path":["o-kl1ac4xahf/r-q208/ou-q208-vj15xzri/ou-q208-9qq4mo0y/"],"source_region":"eu-west-2","principal_id":"arn:aws:iam::332499610595:role/cads-data-service","principal_tags":{"ServiceCode":"CAS","Organization":"DEFRA","Platform":"cdp","ServiceName":"cads-data-service","ServiceType":"Microservice","Service":"cads-data-service","Environment":"dev"}}'
     - Type: "sub"
-      Value: "arn:aws:iam::000000000000:role/cads-data-service"
+      Value: "arn:aws:iam::332499610595:role/cads-data-service"
 
 # Negative test callers: each must be REJECTED by a receiving service.
 # Wrong AWS organisation (ServiceName is valid, org_id is not trusted)
@@ -51,36 +54,38 @@
   AllowedGrantTypes:
     - "client_credentials"
   AllowedScopes:
-    - "sts.cads-cds"
+    - "sts.cads-data-service"
     - "sts.cads-bridge"
   AccessTokenType: "Jwt"
   AlwaysSendClientClaims: true
   ClientClaimsPrefix: ""
+  AccessTokenLifetime: 300
   Claims:
     - Type: "https://sts.amazonaws.com/"
       ValueType: "json"
-      Value: '{"aws_account":"999999999999","org_id":"o-someoneelse","source_region":"eu-west-2","principal_tags":{"ServiceName":"cads-bridge","Environment":"local"}}'
+      Value: '{"org_id":"o-someoneelse","aws_account":"999999999999","ou_path":["o-kl1ac4xahf/r-q208/ou-q208-vj15xzri/ou-q208-9qq4mo0y/"],"source_region":"eu-west-2","principal_id":"arn:aws:iam::999999999999:role/cads-bridge","principal_tags":{"ServiceCode":"CAS","Organization":"DEFRA","Platform":"cdp","ServiceName":"cads-bridge","ServiceType":"Microservice","Service":"cads-bridge","Environment":"dev"}}'
     - Type: "sub"
       Value: "arn:aws:iam::999999999999:role/cads-bridge"
 
-# Wrong environment (a prod token used against local)
+# Wrong environment (a prod token used against dev)
 - ClientId: "local-sts-wrong-env"
   ClientSecrets:
     - "local-mock-secret"
   AllowedGrantTypes:
     - "client_credentials"
   AllowedScopes:
-    - "sts.cads-cds"
+    - "sts.cads-data-service"
     - "sts.cads-bridge"
   AccessTokenType: "Jwt"
   AlwaysSendClientClaims: true
   ClientClaimsPrefix: ""
+  AccessTokenLifetime: 300
   Claims:
     - Type: "https://sts.amazonaws.com/"
       ValueType: "json"
-      Value: '{"aws_account":"000000000000","org_id":"o-localmock","source_region":"eu-west-2","principal_tags":{"ServiceName":"cads-bridge","Environment":"prod"}}'
+      Value: '{"org_id":"o-kl1ac4xahf","aws_account":"332499610595","ou_path":["o-kl1ac4xahf/r-q208/ou-q208-vj15xzri/ou-q208-9qq4mo0y/"],"source_region":"eu-west-2","principal_id":"arn:aws:iam::332499610595:role/cads-bridge","principal_tags":{"ServiceCode":"CAS","Organization":"DEFRA","Platform":"cdp","ServiceName":"cads-bridge","ServiceType":"Microservice","Service":"cads-bridge","Environment":"prod"}}'
     - Type: "sub"
-      Value: "arn:aws:iam::000000000000:role/cads-bridge"
+      Value: "arn:aws:iam::332499610595:role/cads-bridge"
 
 # ServiceName that is not in Acl:StsClients
 - ClientId: "local-sts-unknown-service"
@@ -89,14 +94,15 @@
   AllowedGrantTypes:
     - "client_credentials"
   AllowedScopes:
-    - "sts.cads-cds"
+    - "sts.cads-data-service"
     - "sts.cads-bridge"
   AccessTokenType: "Jwt"
   AlwaysSendClientClaims: true
   ClientClaimsPrefix: ""
+  AccessTokenLifetime: 300
   Claims:
     - Type: "https://sts.amazonaws.com/"
       ValueType: "json"
-      Value: '{"aws_account":"000000000000","org_id":"o-localmock","source_region":"eu-west-2","principal_tags":{"ServiceName":"not-on-the-allow-list","Environment":"local"}}'
+      Value: '{"org_id":"o-kl1ac4xahf","aws_account":"332499610595","ou_path":["o-kl1ac4xahf/r-q208/ou-q208-vj15xzri/ou-q208-9qq4mo0y/"],"source_region":"eu-west-2","principal_id":"arn:aws:iam::332499610595:role/not-on-the-allow-list","principal_tags":{"ServiceCode":"CAS","Organization":"DEFRA","Platform":"cdp","ServiceName":"not-on-the-allow-list","ServiceType":"Microservice","Service":"not-on-the-allow-list","Environment":"dev"}}'
     - Type: "sub"
-      Value: "arn:aws:iam::000000000000:role/not-on-the-allow-list"
+      Value: "arn:aws:iam::332499610595:role/not-on-the-allow-list"

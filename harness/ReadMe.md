@@ -37,3 +37,21 @@ Signs in through the browser using the authorization code flow and prints the to
 
 Both use the password `password`. Use `-Scopes "openid profile email ..."` to override the scopes.
 Client details must match `oidc/config/clients.yml`.
+
+## Get a token from the sts-mock
+
+Requests a token from the STS mock (client credentials flow, no browser) and prints the decoded header and payload. See `sts-mock/ReadMe.md` for the clients and scopes.
+
+```
+./harness/get-sts-token.ps1 -App cads-bridge -Audience cads-data-service
+./harness/get-sts-token.ps1 -App cads-data-service -Audience cads-bridge
+./harness/get-sts-token.ps1 -App cads-bridge -Scopes "sts.cads-data-service"   # set the scope manually
+```
+
+| Parameter   | Meaning                                                                         |
+|-------------|---------------------------------------------------------------------------------|
+| `-App`      | Required. Who is calling (`cads-bridge` or `cads-data-service`).                |
+| `-Audience` | Required. Who the token is for. The scope is derived as `sts.<audience>`.       |
+| `-Scopes`   | Optional. Overrides the derived scope.                                          |
+
+The secret is `local-mock-secret`. Client details must match `sts-mock/config/clients.yml`.
