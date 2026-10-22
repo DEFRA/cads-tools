@@ -9,14 +9,14 @@ services:
       PORT: 80
       CLIENTS_CONFIGURATION_PATH: /data/clients.yml
       API_SCOPES_INLINE: |
-        - Name: "sts.cads-cds"
+        - Name: "sts.cads-data-service"
           DisplayName: "Audience: cads-data-service"
         - Name: "sts.cads-bridge"
           DisplayName: "Audience: cads-bridge"
       API_RESOURCES_INLINE: |
-        - Name: "sts://local-cads-cds"
-          Scopes: ["sts.cads-cds"]
-        - Name: "sts://local-cads-bridge"
+        - Name: "https://cads-data-service.dev.cdp-int.defra.cloud"
+          Scopes: ["sts.cads-data-service"]
+        - Name: "https://cads-bridge.dev.cdp-int.defra.cloud"
           Scopes: ["sts.cads-bridge"]
       SERVER_OPTIONS_INLINE: |
         {
