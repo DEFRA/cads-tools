@@ -14,9 +14,9 @@ services:
         - Name: "sts.cads-bridge"
           DisplayName: "Audience: cads-bridge"
       API_RESOURCES_INLINE: |
-        - Name: "https://cads-data-service.dev.cdp-int.defra.cloud"
+        - Name: "https://cads-data-service.local"
           Scopes: ["sts.cads-data-service"]
-        - Name: "https://cads-bridge.dev.cdp-int.defra.cloud"
+        - Name: "https://cads-bridge.local"
           Scopes: ["sts.cads-bridge"]
       SERVER_OPTIONS_INLINE: |
         {
