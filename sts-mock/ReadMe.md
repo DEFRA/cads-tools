@@ -28,15 +28,15 @@ curl -s http://localhost:5567/.well-known/openid-configuration
 Plain REST, no AWS signing. The token has `iss`, `aud`, `sub` (role ARN) and the nested `https://sts.amazonaws.com/` claim, like a real AWS token.
 
 ```
-curl -s -X POST http://localhost:5567/connect/token -d grant_type=client_credentials -d client_id=local-sts-cads-bridge -d client_secret=local-mock-secret -d scope=sts.cads-cds
+curl -s -X POST http://localhost:5567/connect/token -d grant_type=client_credentials -d client_id=local-sts-cads-bridge -d client_secret=local-mock-secret -d scope=sts.cads-data-service
 ```
 
 Use `scope` to choose the audience (the service the token is for):
 
-| Scope             | Token `aud` (audience)    |
-| ----------------- | ------------------------- |
-| `sts.cads-cds`    | `sts://local-cads-cds`    |
-| `sts.cads-bridge` | `sts://local-cads-bridge` |
+| Scope                   | Token `aud` (audience)            |
+| ----------------------- | --------------------------------- |
+| `sts.cads-data-service` | `https://cads-data-service.local` |
+| `sts.cads-bridge`       | `https://cads-bridge.local`       |
 
 Use `client_id` to choose who is calling. All clients use the secret `local-mock-secret`.
 
@@ -45,7 +45,7 @@ Use `client_id` to choose who is calling. All clients use the secret `local-mock
 | `local-sts-cads-bridge`       | `cads-bridge`          | valid caller |
 | `local-sts-cads-data-service` | `cads-data-service`    | valid caller |
 
-Local values: `org_id` = `o-localmock`, `principal_tags.Environment` = `local`.
+Local values: `org_id` = `o-local`, `principal_tags.Environment` = `local`. These match the local `AuthenticationConfiguration:AwsSts` settings of the receiving services.
 
 Notes:
 
