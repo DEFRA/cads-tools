@@ -148,4 +148,54 @@ queue_arn=$(awslocal sqs get-queue-attributes \
   --query 'Attributes.QueueArn')
 echo "'cads-bridge-queue.fifo' queue ARN: $queue_arn"
 
+## 'cads-mi-reports-queue.fifo'
+
+### Create 'cads-mi-reports-queue.fifo' DLQ
+dlq_url=$(awslocal sqs create-queue \
+  --queue-name cads-mi-reports-queue-deadletter.fifo \
+  --attributes '{"FifoQueue":"true","ContentBasedDeduplication":"true"}' \
+  --output text \
+  --query 'QueueUrl')
+echo "'cads-mi-reports-queue.fifo' DLQ created: $dlq_url"
+
+### Get the ARN of the 'cads-mi-reports-queue.fifo' DLQ, which is needed for the redrive policy
+dlq_arn=$(awslocal sqs get-queue-attributes \
+  --queue-url "$dlq_url" \
+  --attribute-names QueueArn \
+  --output text \
+  --query 'Attributes.QueueArn')
+echo "'cads-mi-reports-queue.fifo' DLQ ARN: $dlq_arn"
+
+### Create 'cads-mi-reports-queue.fifo' queue
+queue_url=$(awslocal sqs create-queue \
+  --queue-name cads-mi-reports-queue.fifo \
+  --attributes '{"FifoQueue":"true","ContentBasedDeduplication":"true"}' \
+  --output text \
+  --query 'QueueUrl')
+echo "'cads-mi-reports-queue.fifo' queue created: $queue_url"
+
+### Define the Redrive Policy, linking the main queue to the DLQ.
+redrive_policy_json=$(cat <<EOF
+{
+  "deadLetterTargetArn": "$dlq_arn",
+  "maxReceiveCount": "3"
+}
+EOF
+)
+
+### Set redrive policy for 'cads-mi-reports-queue.fifo' DLQ
+echo "Set redrive policy for 'cads-mi-reports-queue.fifo' DLQ..."
+awslocal sqs set-queue-attributes \
+  --queue-url "$queue_url" \
+  --attributes "{\"RedrivePolicy\":\"{\\\"deadLetterTargetArn\\\":\\\"$dlq_arn\\\",\\\"maxReceiveCount\\\":\\\"3\\\"}\"}"
+
+### Get the 'cads-mi-reports-queue.fifo' queue ARN
+queue_arn=$(awslocal sqs get-queue-attributes \
+  --queue-url "$queue_url" \
+  --attribute-name QueueArn \
+  --endpoint-url=http://localhost:4566 \
+  --output text \
+  --query 'Attributes.QueueArn')
+echo "'cads-mi-reports-queue.fifo' queue ARN: $queue_arn"
+
 echo "LocalStack Bootstrapping Complete"
