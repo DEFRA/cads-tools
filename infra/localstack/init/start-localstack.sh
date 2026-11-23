@@ -42,63 +42,63 @@ else
     --bucket "$INTERNAL_BUCKET_NAME" \
     --region eu-west-2 \
     --create-bucket-configuration LocationConstraint=eu-west-2
-  echo "S3 bucket created: cads-internal-bucket"
+  echo "S3 bucket created: $INTERNAL_BUCKET_NAME"
 fi
 
-## Create CCoE Reports Bucket (represents the external CCoE-owned bucket, accessed via IAM role in real environments)
-CCOE_BUCKET_NAME="cads-ccoe-reports-bucket"
-CCOE_KMS_ALIAS="alias/cads-ccoe-reports-key"
+## Create Reports Bucket (represents the external CCoE-owned bucket, accessed via IAM role in real environments)
+REPORTS_BUCKET_NAME="cads-reports-bucket"
+REPORTS_KMS_ALIAS="alias/cads-reports-key"
 
 ### Create (or reuse) the KMS key used for SSE-KMS encryption of uploaded reports
-existing_ccoe_kms_alias=$(awslocal kms list-aliases \
-  --query "Aliases[?AliasName=='$CCOE_KMS_ALIAS'].AliasName" \
+existing_reports_kms_alias=$(awslocal kms list-aliases \
+  --query "Aliases[?AliasName=='$REPORTS_KMS_ALIAS'].AliasName" \
   --output text)
 
-if [ "$existing_ccoe_kms_alias" == "$CCOE_KMS_ALIAS" ]; then
-  echo "KMS alias already exists: $CCOE_KMS_ALIAS"
+if [ "$existing_reports_kms_alias" == "$REPORTS_KMS_ALIAS" ]; then
+  echo "KMS alias already exists: $REPORTS_KMS_ALIAS"
 else
-  ccoe_kms_key_id=$(awslocal kms create-key \
-    --description "CCoE reports bucket encryption key" \
+  reports_kms_key_id=$(awslocal kms create-key \
+    --description "Reports bucket encryption key" \
     --output text \
     --query 'KeyMetadata.KeyId')
-  echo "KMS key created: $ccoe_kms_key_id"
+  echo "KMS key created: $reports_kms_key_id"
 
   awslocal kms create-alias \
-    --alias-name "$CCOE_KMS_ALIAS" \
-    --target-key-id "$ccoe_kms_key_id"
-  echo "KMS alias created: $CCOE_KMS_ALIAS"
+    --alias-name "$REPORTS_KMS_ALIAS" \
+    --target-key-id "$reports_kms_key_id"
+  echo "KMS alias created: $REPORTS_KMS_ALIAS"
 fi
 
-CCOE_KMS_KEY_ARN="arn:aws:kms:eu-west-2:000000000000:$CCOE_KMS_ALIAS"
-echo "CCoE reports KMS key ARN: $CCOE_KMS_KEY_ARN"
+REPORTS_KMS_KEY_ARN="arn:aws:kms:eu-west-2:000000000000:$REPORTS_KMS_ALIAS"
+echo "Reports KMS key ARN: $REPORTS_KMS_KEY_ARN"
 
 ### Create the bucket
-existing_ccoe_bucket=$(awslocal s3api list-buckets \
-  --query "Buckets[?Name=='$CCOE_BUCKET_NAME'].Name" \
+existing_reports_bucket=$(awslocal s3api list-buckets \
+  --query "Buckets[?Name=='$REPORTS_BUCKET_NAME'].Name" \
   --output text)
 
-if [ "$existing_ccoe_bucket" == "$CCOE_BUCKET_NAME" ]; then
-  echo "S3 bucket already exists: $CCOE_BUCKET_NAME"
+if [ "$existing_reports_bucket" == "$REPORTS_BUCKET_NAME" ]; then
+  echo "S3 bucket already exists: $REPORTS_BUCKET_NAME"
 else
   awslocal s3api create-bucket \
-    --bucket "$CCOE_BUCKET_NAME" \
+    --bucket "$REPORTS_BUCKET_NAME" \
     --region eu-west-2 \
     --create-bucket-configuration LocationConstraint=eu-west-2
-  echo "S3 bucket created: $CCOE_BUCKET_NAME"
+  echo "S3 bucket created: $REPORTS_BUCKET_NAME"
 fi
 
 ### Configure default SSE-KMS encryption on the bucket, mirroring the real CCoE bucket's
 ### encryption-at-rest requirement. CadsCds also sets per-object SSE-KMS params on upload,
 ### so this is a belt-and-braces default for anything uploaded without explicit params.
-echo "Setting default SSE-KMS encryption for: $CCOE_BUCKET_NAME"
+echo "Setting default SSE-KMS encryption for: $REPORTS_BUCKET_NAME"
 awslocal s3api put-bucket-encryption \
-  --bucket "$CCOE_BUCKET_NAME" \
+  --bucket "$REPORTS_BUCKET_NAME" \
   --server-side-encryption-configuration "{
     \"Rules\": [
       {
         \"ApplyServerSideEncryptionByDefault\": {
           \"SSEAlgorithm\": \"aws:kms\",
-          \"KMSMasterKeyID\": \"$CCOE_KMS_KEY_ARN\"
+          \"KMSMasterKeyID\": \"$REPORTS_KMS_KEY_ARN\"
         },
         \"BucketKeyEnabled\": true
       }
