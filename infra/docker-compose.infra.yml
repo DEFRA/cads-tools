@@ -1,6 +1,7 @@
 services:
   postgres:
-    image: postgres:16.6
+    build: ./postgres
+    image: cads-postgres:16.6-cron
     container_name: cads-postgres
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
