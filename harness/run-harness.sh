@@ -24,7 +24,7 @@ if [[ "$COMMAND" == "up" ]]; then
     -f "$ROOT_DIR/infra/docker-compose.infra.yml" \
     -f "$ROOT_DIR/oidc/docker-compose.oidc.yml" \
     -f "$ROOT_DIR/sts-mock/docker-compose.sts-mock.yml" \
-    up -d
+    up -d --build
   echo "[cads-tools] Waiting for LocalStack to be ready..."
   until curl -s http://localhost:4566/_localstack/health | grep '"s3": "running"' >/dev/null; do
     sleep 1
